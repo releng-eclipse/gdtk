@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ganz Studios Development Toolkit Tests
+Bundle-SymbolicName: com.ganz.eclipse.gdtk.core.tests
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: com.ganz.eclipse.gdtk.core;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.junit,
+ org.eclipse.core.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.launching,
+ org.eclipse.jdt.ui;bundle-version="3.11.2",
+ org.apache.ivy
