@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ganz Development Toolkit User Interface
+Bundle-SymbolicName: com.ganz.eclipse.gtdk.ui
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Ganz Studios
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
