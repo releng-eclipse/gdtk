@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="com.ganz.eclipse.gtdk.ui.views"
+            class="com.ganz.eclipse.gtdk.internal.ui.view.DependenciesExplorerView"
+            icon="icons/sample.gif"
+            id="com.ganz.eclipse.gtdk.internal.ui.view.dependenciesexplorerview"
+            name="Dependencies Explorer"
+            restorable="true">
+      </view>
+      <category
+            id="com.ganz.eclipse.gtdk.ui.views"
+            name="Module">
+      </category>
+   </extension>
+
+
+</plugin>
