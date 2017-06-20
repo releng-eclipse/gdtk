@@ -1,4 +1,4 @@
-package com.ganz.eclipse.gdtk.internal.ivy;
+package com.ganz.eclipse.gdtk.internal.old;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.ganz.eclipse.gdtk.core.ModuleCore;
 import com.ganz.eclipse.gdtk.internal.core.Module;
+import com.ganz.eclipse.gdtk.internal.ivy.ResolveRequest;
 
 public class ResolveJob extends Job {
 	private static String DEBUG_OPTION_NAME = ModuleCore.PLUGIN_ID + "/debug/ivy/ResolveJob";

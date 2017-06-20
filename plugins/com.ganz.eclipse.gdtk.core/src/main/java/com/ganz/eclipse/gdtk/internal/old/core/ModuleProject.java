@@ -6,18 +6,17 @@ import org.eclipse.core.runtime.Status;
 
 import com.ganz.eclipse.gdtk.core.IModule;
 import com.ganz.eclipse.gdtk.core.ModuleCore;
+import com.ganz.eclipse.gdtk.internal.core.SolutionManager.PerModuleState;
 
-public class Module implements IModule {
+public class ModuleProject implements IModule {
+	IProject project;
 
-	protected IProject project;
-
-	public Module(IProject project, Solution parent) {
+	public ModuleProject(IProject project, Solution parent) {
 		this.project = project;
 	}
 
-	@Override
-	public IProject getProject() {
-		return this.project;
+	public PerModuleState getPerModuleState() throws SolutionException {
+		return SolutionManager.getInstance().getPerModuleState(project);
 	}
 
 	public IStatus resolve() {
@@ -25,4 +24,8 @@ public class Module implements IModule {
 		return new Status(IStatus.OK, ModuleCore.PLUGIN_ID, "");
 	}
 
+	@Override
+	public IProject getProject() {
+		return this.project;
+	}
 }

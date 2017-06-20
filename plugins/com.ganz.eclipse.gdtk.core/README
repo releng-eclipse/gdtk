@@ -1,0 +1,18 @@
+QUESTIONS
+1. What is the purpose of the DeltaProcessingState
+
+Adding artifacts to the classpath/buildpath of a project
+Java
+---------------
+JavaCore::newLibraryEntry();
+
+PHP
+---------------
+org.eclipse.dltk.core/model/org/eclipse/dltk/core/IScriptProject.java
+IScriptProject::
+DLTKCore::newLibraryEntry()
+
+FEATURES
+==============================================
+Manage the file mappings for php while debugging
+Create a zend server facet

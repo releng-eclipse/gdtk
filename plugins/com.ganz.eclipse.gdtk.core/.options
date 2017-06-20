@@ -1,0 +1,5 @@
+
+org.eclipse.core.runtime/perf=true
+com.ganz.eclipse.gdtk.core/perf/agents=true;
+com.ganz.eclipse.gdtk.core/debug/ivy/ResolveJob=true
+org.eclipse.jdt.core/perf/completion=300

@@ -20,7 +20,7 @@
 <ivy-module version="1.0">
     <info 
         organisation="acme"
-        module="test"
+        module="example"
 	/>
     <dependencies>
        <dependency org="commons-io" name="commons-io" rev="2.4"/>

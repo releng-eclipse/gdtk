@@ -5,16 +5,28 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.BundleContext;
+
+import com.ganz.eclipse.gdtk.internal.core.ModuleModelManager;
+import com.ganz.eclipse.gdtk.internal.util.Logger;
 
 public class ModuleCore extends Plugin {
 	public static final String PLUGIN_ID = "com.ganz.eclipse.gdtk.core"; //$NON-NLS-1$
 	public static final String NATURE_ID = PLUGIN_ID + ".modulenature"; //$NON-NLS-1$
 	private static BundleContext ctx;
+	private static ModuleCore plugin;
+	private static Logger logger;
 
 	static BundleContext getContext() {
 		return ctx;
+	}
+
+	public static ModuleCore getDefault() {
+		return plugin;
 	}
 
 	/*
@@ -26,7 +38,14 @@ public class ModuleCore extends Plugin {
 	@Override
 	public void start(BundleContext ctx) throws Exception {
 		super.start(ctx);
-		// JavaCore.getJavaCore()
+		plugin = this;
+		Logger.getInstance().info("Starting ModuleCore");
+		if (PerformanceStats.ENABLED) {
+			Logger.getInstance().info("PerformanceStats is enabled.");
+		}
+		JavaCore.getJavaCore();
+		// org.eclipse.jdt.ui.CompilationUnitEditor
+		PDECore t;
 	}
 
 	/*
@@ -37,6 +56,8 @@ public class ModuleCore extends Plugin {
 	 */
 	@Override
 	public void stop(BundleContext ctx) throws Exception {
+		Logger.getInstance().info("Stopping ModuleCore");
+		plugin = null;
 		super.stop(ctx);
 	}
 
@@ -56,6 +77,22 @@ public class ModuleCore extends Plugin {
 		if (monitor != null) {
 			monitor.worked(1);
 		}
+	}
+
+	/**
+	 * Returns the Module project corresponding to the given project.
+	 * <p>
+	 * 
+	 * @param project
+	 * @return the Module project corresponding to the given project, or null if
+	 *         the given project is null.
+	 */
+	public static IModuleProject create(IProject project) {
+		if (project == null) {
+			return null;
+		}
+		return ModuleModelManager.getInstance().getModuleProject(project);
+
 	}
 
 }

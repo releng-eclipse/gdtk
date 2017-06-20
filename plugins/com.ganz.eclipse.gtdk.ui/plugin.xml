@@ -5,16 +5,40 @@
          point="org.eclipse.ui.views">
       <view
             category="com.ganz.eclipse.gtdk.ui.views"
-            class="com.ganz.eclipse.gtdk.internal.ui.view.DependenciesExplorerView"
-            icon="icons/sample.gif"
-            id="com.ganz.eclipse.gtdk.internal.ui.view.dependenciesexplorerview"
-            name="Dependencies Explorer"
+            class="com.ganz.eclipse.gtdk.internal.ui.view.dependencies.View"
+            icon="icons/dependencies.png"
+            id="com.ganz.eclipse.gtdk.internal.ui.view.dependencies.view"
+            name="%view.dependencies.name"
             restorable="true">
       </view>
       <category
             id="com.ganz.eclipse.gtdk.ui.views"
-            name="Module">
+            name="%views.category.name">
       </category>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="xml"
+            file-names="metadata.xml"
+            id="com.ganz.eclipse.gtdk.contentType.descriptorFile"
+            name="Module Descriptor File"
+            priority="normal">
+      </content-type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="com.ganz.eclipse.gtdk.internal.ui.editor.descriptor.XMLEditor"
+            filenames="metadata.xml"
+            icon="icons/xmleditor.gif"
+            id="com.ganz.eclipse.gtdk.ui.editor.descriptor.xmleditor"
+            name="Module Descriptor Editor">
+         <contentTypeBinding
+               contentTypeId="com.ganz.eclipse.gtdk.contentType.descriptorFile">
+         </contentTypeBinding>
+      </editor>
    </extension>
 
 
