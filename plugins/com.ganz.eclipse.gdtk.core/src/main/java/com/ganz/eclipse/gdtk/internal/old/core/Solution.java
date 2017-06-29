@@ -1,4 +1,4 @@
-package com.ganz.eclipse.gdtk.internal.core;
+package com.ganz.eclipse.gdtk.internal.old.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

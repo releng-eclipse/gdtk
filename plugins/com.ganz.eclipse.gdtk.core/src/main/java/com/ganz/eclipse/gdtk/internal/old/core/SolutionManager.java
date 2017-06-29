@@ -1,4 +1,4 @@
-package com.ganz.eclipse.gdtk.internal.core;
+package com.ganz.eclipse.gdtk.internal.old.core;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

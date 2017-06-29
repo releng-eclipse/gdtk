@@ -1,34 +1,40 @@
-package com.ganz.eclipse.gdtk.internal.ivy;
+package com.ganz.eclipse.gdtk.internal.old;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.PerformanceStats;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.ganz.eclipse.gdtk.core.ModuleCore;
-import com.ganz.eclipse.gdtk.internal.core.ModuleProject;
-import com.ganz.eclipse.gdtk.internal.util.Logger;
+import com.ganz.eclipse.gdtk.internal.core.Module;
+import com.ganz.eclipse.gdtk.internal.ivy.ResolveRequest;
 
 public class ResolveJob extends Job {
 	private static String DEBUG_OPTION_NAME = ModuleCore.PLUGIN_ID + "/debug/ivy/ResolveJob";
 	private static boolean VERBOSE = true;
-	private static String PERF_RESOLVE_JOB = ModuleCore.PLUGIN_ID + "/perf/agents";
-	static String NAME = "Module Resolve Job";
+
+	private static final int FULL_RESOLVE_WORK_UNITS = 1000;
+	private static final int MAIN_RESOLVE_WORK_UNITS = 800;
+	private static final int POST_RESOLVE_WORK_UNITS = 100;
+
+	private static final int SCHEDULE_DELAY = 1000;
 
 	private static ResolveJob instance;
+	private final List<ResolveRequest> queue;
+	private final List<Module> queuex;
 
-	private final List queue = new ArrayList();
-
-	public ResolveJob() {
-		super(NAME);
+	private ResolveJob() {
+		super("Module Resolve Worker");
 		setUser(false);
 		setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+		queue = new ArrayList<ResolveRequest>();
+		queuex = new ArrayList<Module>();
 	}
 
 	public static ResolveJob getInstance() {
@@ -38,72 +44,89 @@ public class ResolveJob extends Job {
 		return instance;
 	}
 
-	public static void resolve(ModuleProject module) {
-		resolve(module, new NullProgressMonitor());
+	public void resolve(Module module, IProgressMonitor monitor) {
+		synchronized (queuex) {
+			queuex.add(module);
+		}
+		if (monitor != null) {
+			run(monitor);
+		} else {
+			schedule(SCHEDULE_DELAY);
+		}
 	}
 
-	public static void resolve(ModuleProject module, IProgressMonitor monitor) {
-		ResolveJob instance = getInstance();
-		synchronized (instance.queue) {
-			instance.queue.add(module);
+	public void addRequest(ResolveRequest request) {
+		synchronized (queue) {
+			queue.add(request);
 		}
-		instance.schedule(1000);
+		schedule(SCHEDULE_DELAY);
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		PerformanceStats stats = PerformanceStats.getStats(PERF_RESOLVE_JOB, this);
-		try {
-			stats.startRun();
-			return doRun(monitor);
-		} catch (RuntimeException e) {
-			Logger.getInstance().error("Resolve failed.", e);
-			// TODO
-			return Status.OK_STATUS;
-		} finally {
-			stats.endRun();
-			Logger.getInstance().info("Resolve took " + stats.getRunningTime());
-		}
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private IStatus doRun(IProgressMonitor monitor) {
-		List<ModuleProject> modules;
+		trace("Starting resolve worker ...");
+		List<ResolveRequest> requests;
 		synchronized (queue) {
-			modules = new ArrayList<ModuleProject>(queue);
+			requests = new ArrayList(queue);
 			queue.clear();
 		}
-		if (modules.isEmpty()) {
+
+		if (requests.isEmpty()) {
+			trace("Nothing to resolve.");
 			return Status.OK_STATUS;
 		}
 
-		trace("Found {0} modules to resolve.", modules.size());
+		trace("Resolving %d module(s).", requests.size());
+		monitor.beginTask("Loading module descriptors ...", FULL_RESOLVE_WORK_UNITS);
 
-		for (ModuleProject module : modules) {
-			boolean canceled = launchResolveThread(module, monitor);
+		final MultiStatus errors = new MultiStatus(ModuleCore.PLUGIN_ID, IStatus.ERROR, "Failed to resolve some modules.", null);
+
+		// ANTE RESOLVE
+		int workUnit = (FULL_RESOLVE_WORK_UNITS - MAIN_RESOLVE_WORK_UNITS - POST_RESOLVE_WORK_UNITS) / requests.size();
+
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(ResolveJob.class.getClassLoader());
+		try {
+			// try to do something like
+			// for(Imodule module : modules) {
+			// state = Solution.getPerModuleState(module)
+			// state.getResolver().getIvy();
+			for (ResolveRequest request : requests) {
+				trace("Resolving %s", request);
+				// monitor.subTask(name);
+				IProject project = request.getResolver().getProject();
+				if (project == null) {
+					// warn()
+					monitor.worked(workUnit);
+					continue;
+				}
+				if (!project.isAccessible()) {
+					// trace()
+					monitor.worked(workUnit);
+					continue;
+				}
+			}
+
+		} finally {
+			Thread.currentThread().setContextClassLoader(cl);
+		}
+
+		// POST RESOLVE
+		workUnit = POST_RESOLVE_WORK_UNITS / requests.size();
+		monitor.setTaskName("Performing post resolve tasks ...");
+		for (ResolveRequest request : requests) {
+			if (request.getStatus().isOK()) {
+				monitor.setTaskName("Performing post resolve tasks ...");
+				request.getResolver().postResolve();
+			}
+			monitor.worked(workUnit);
 		}
 		return Status.OK_STATUS;
-	}
-
-	private boolean launchResolveThread(final ModuleProject module, final IProgressMonitor monitor) {
-		final IStatus[] status = new IStatus[1];
-		ModuleResolver resolver = new ModuleResolver();
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				// try {
-				resolver.resolve(module, monitor, 0);
-				// } catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				// e.printStackTrace();
-				// }
-			}
-		};
-
-		Runner runner = new Runner();
-		if (runner.launch(runnable, monitor)) {
-			return true;
-		}
-		return false;
 	}
 
 	private void trace(String message, Object... args) {

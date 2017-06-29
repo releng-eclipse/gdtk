@@ -1,4 +1,4 @@
-package com.ganz.eclipse.gdtk.internal.core;
+package com.ganz.eclipse.gdtk.internal.old.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
