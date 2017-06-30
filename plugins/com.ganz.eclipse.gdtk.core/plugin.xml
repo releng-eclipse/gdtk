@@ -7,5 +7,12 @@
             class="com.ganz.eclipse.gdtk.core.ModuleCore">
       </startup>
    </extension>
+   <extension
+         point="org.eclipse.mylyn.tasks.core.taskActivationListeners">
+      <listener
+            class="com.ganz.eclipse.gdtk.internal.listener.TaskActivationListener"
+            id="com.ganz.eclipse.gdtk.internal.listener.taskactivation">
+      </listener>
+   </extension>
 
 </plugin>

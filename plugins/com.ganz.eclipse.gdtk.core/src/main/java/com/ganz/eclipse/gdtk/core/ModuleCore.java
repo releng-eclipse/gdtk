@@ -12,6 +12,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.BundleContext;
 
 import com.ganz.eclipse.gdtk.internal.core.ModuleModelManager;
+import com.ganz.eclipse.gdtk.internal.core.Solution;
 import com.ganz.eclipse.gdtk.internal.util.Logger;
 
 public class ModuleCore extends Plugin {
@@ -43,9 +44,11 @@ public class ModuleCore extends Plugin {
 		if (PerformanceStats.ENABLED) {
 			Logger.getInstance().info("PerformanceStats is enabled.");
 		}
-		JavaCore.getJavaCore();
+		Solution.getInstance().open();
+		//JavaCore.getJavaCore();
 		// org.eclipse.jdt.ui.CompilationUnitEditor
-		PDECore t;
+		//PDECore t;
+	
 	}
 
 	/*
@@ -57,6 +60,7 @@ public class ModuleCore extends Plugin {
 	@Override
 	public void stop(BundleContext ctx) throws Exception {
 		Logger.getInstance().info("Stopping ModuleCore");
+		Solution.getInstance().close();
 		plugin = null;
 		super.stop(ctx);
 	}
