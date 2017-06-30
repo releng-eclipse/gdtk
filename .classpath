@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="plugins/com.ganz.eclipse.gdtk.core.tests/src/test/java"/>
+	<classpathentry kind="src" path="plugins/com.ganz.eclipse.gdtk.core/src/main/java"/>
+	<classpathentry kind="src" path="plugins/com.ganz.eclipse.gdtk.php/src/main/java"/>
+	<classpathentry kind="src" path="plugins/com.ganz.eclipse.gtdk.ui/src/main/java"/>
+	<classpathentry kind="lib" path="plugins/com.ganz.eclipse.gdtk.core.tests/src/test/resources/jar/commons-cli-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="plugins/com.ganz.eclipse.gdtk.core.tests/src/test/resources/jar/commons-cli-1.0.jar"/>
+	<classpathentry kind="lib" path="plugins/com.ganz.eclipse.gdtk.core.tests/target/test-classes/jar/commons-cli-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="plugins/com.ganz.eclipse.gdtk.core.tests/target/test-classes/jar/commons-cli-1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="plugins/com.ganz.eclipse.gdtk.core/target/classes"/>
+</classpath>
