@@ -12,7 +12,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.BundleContext;
 
 import com.ganz.eclipse.gdtk.internal.core.ModuleModelManager;
-import com.ganz.eclipse.gdtk.internal.core.Solution;
 import com.ganz.eclipse.gdtk.internal.util.Logger;
 
 public class ModuleCore extends Plugin {
@@ -40,15 +39,14 @@ public class ModuleCore extends Plugin {
 	public void start(BundleContext ctx) throws Exception {
 		super.start(ctx);
 		plugin = this;
-		Logger.getInstance().info("Starting ModuleCore");
+		Logger.getLog().info("Starting ModuleCore");
 		if (PerformanceStats.ENABLED) {
-			Logger.getInstance().info("PerformanceStats is enabled.");
+			Logger.getLog().info("PerformanceStats is enabled.");
 		}
-		Solution.getInstance().open();
-		//JavaCore.getJavaCore();
+		JavaCore.getJavaCore();
 		// org.eclipse.jdt.ui.CompilationUnitEditor
-		//PDECore t;
-	
+		PDECore t;
+
 	}
 
 	/*
@@ -59,8 +57,7 @@ public class ModuleCore extends Plugin {
 	 */
 	@Override
 	public void stop(BundleContext ctx) throws Exception {
-		Logger.getInstance().info("Stopping ModuleCore");
-		Solution.getInstance().close();
+		Logger.getLog().info("Stopping ModuleCore");
 		plugin = null;
 		super.stop(ctx);
 	}
@@ -91,7 +88,7 @@ public class ModuleCore extends Plugin {
 	 * @return the Module project corresponding to the given project, or null if
 	 *         the given project is null.
 	 */
-	public static IModuleProject create(IProject project) {
+	public static IModule create(IProject project) {
 		if (project == null) {
 			return null;
 		}

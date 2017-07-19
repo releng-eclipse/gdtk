@@ -13,7 +13,6 @@ import org.eclipse.zest.core.viewers.ZoomContributionViewItem;
 import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 
-import com.ganz.eclipse.gdtk.internal.core.SolutionException;
 
 public class View extends ViewPart implements IZoomableWorkbenchPart {
 
@@ -30,7 +29,7 @@ public class View extends ViewPart implements IZoomableWorkbenchPart {
 		Node node = null;
 		try {
 			node = NodeAdapter.adapt(project);
-		} catch (SolutionException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

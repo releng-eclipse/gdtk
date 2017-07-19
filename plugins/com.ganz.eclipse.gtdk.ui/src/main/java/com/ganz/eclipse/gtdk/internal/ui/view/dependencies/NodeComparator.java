@@ -12,7 +12,7 @@ public class NodeComparator implements Comparator<Node> {
 		if (node1.getDepth() < node2.getDepth()) {
 			return 1;
 		}
-		return node1.getModuleRevisionId().toString().compareTo(node2.getModuleRevisionId().toString());
+		return node1.getRevisionId().toString().compareTo(node2.getRevisionId().toString());
 
 	}
 }

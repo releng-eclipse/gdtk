@@ -3,6 +3,7 @@ package com.ganz.eclipse.gdtk.internal.util;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import com.ganz.eclipse.gdtk.core.ModuleCore;
@@ -15,11 +16,15 @@ public class Logger {
 		log = ModuleCore.getDefault().getLog();
 	}
 
-	static public Logger getInstance() {
+	static public Logger getLog() {
 		if (Logger.inst == null) {
 			Logger.inst = new Logger();
 		}
 		return Logger.inst;
+	}
+
+	public static void log(IStatus status) {
+
 	}
 
 	public void info(String message) {
