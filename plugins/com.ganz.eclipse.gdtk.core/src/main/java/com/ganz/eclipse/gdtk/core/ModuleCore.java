@@ -43,6 +43,7 @@ public class ModuleCore extends Plugin {
 		if (PerformanceStats.ENABLED) {
 			Logger.getLog().info("PerformanceStats is enabled.");
 		}
+		ModuleModelManager.getInstance().start();
 		JavaCore.getJavaCore();
 		// org.eclipse.jdt.ui.CompilationUnitEditor
 		PDECore t;
@@ -58,6 +59,7 @@ public class ModuleCore extends Plugin {
 	@Override
 	public void stop(BundleContext ctx) throws Exception {
 		Logger.getLog().info("Stopping ModuleCore");
+		ModuleModelManager.getInstance().stop();
 		plugin = null;
 		super.stop(ctx);
 	}

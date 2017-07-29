@@ -10,7 +10,7 @@ public class DeltaProcessingState implements IResourceChangeListener {
 
 	public DeltaProcessor getDeltaProcessor() {
 		DeltaProcessor processor = deltaProcessors.get();
-		if (processor != null) {
+		if (processor == null) {
 			processor = new DeltaProcessor(this, ModuleModelManager.getInstance());
 			deltaProcessors.set(processor);
 		}

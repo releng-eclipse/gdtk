@@ -19,35 +19,32 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 
-public class AbstractModuleTests {
-	private static final String SOURCE_FOLDER = "src/test/java";
+import com.ganz.eclipse.gdtk.internal.util.ProjectUtils;
+
+public class AbstractModuleTest {
 	public static final IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
 	@SuppressWarnings("restriction")
-	protected IProject createJavaProject(final String name) throws CoreException {
-		final IWorkspaceRoot wroot = ResourcesPlugin.getWorkspace().getRoot();
-		final IProject proj = wroot.getProject(name);
-		proj.create(NULL_PROGRESS_MONITOR);
-		proj.open(NULL_PROGRESS_MONITOR);
-		org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathsBlock.addJavaNature(proj,
-				new SubProgressMonitor(NULL_PROGRESS_MONITOR, 1));
-		final IJavaProject javaProject = JavaCore.create(proj);
-		final List<IClasspathEntry> entries = new ArrayList<>();
+	protected void configureAsJavaProject(IProject project) throws CoreException {
+		if (!project.isOpen()) {
+
+		}
+		ProjectUtils.addNature(project, JavaCore.NATURE_ID);
+		final IJavaProject javaProject = JavaCore.create(project);
+		final List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
 		for (final IClasspathEntry entry : javaProject.getRawClasspath()) {
 			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				((org.eclipse.jdt.internal.core.ClasspathEntry) entry).path = Path.fromPortableString(SOURCE_FOLDER);
+				((org.eclipse.jdt.internal.core.ClasspathEntry) entry).path = Path.fromPortableString("src/main/java");
 			}
 			entries.add(entry);
 		}
 		entries.add(JavaRuntime.getDefaultJREContainerEntry());
 		javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), NULL_PROGRESS_MONITOR);
-		return proj;
 	}
 
 	protected IProject createModuleProject(final String name) throws CoreException, IOException {

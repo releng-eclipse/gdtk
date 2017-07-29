@@ -1,10 +1,17 @@
 package com.ganz.eclipse.gdtk.internal.core;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -13,10 +20,12 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.ganz.eclipse.gdtk.core.IModule;
-import com.ganz.eclipse.gdtk.core.IModuleDescriptor;
+import com.ganz.eclipse.gdtk.core.ModuleCore;
 import com.ganz.eclipse.gdtk.core.ModuleException;
+import com.ganz.eclipse.gdtk.internal.job.ResolveJob;
 
 public class ModuleModelManager {
 	static private ModuleModelManager instance = new ModuleModelManager();
@@ -88,22 +97,122 @@ public class ModuleModelManager {
 		private ResolveReport resolveReport;
 		public boolean writingDescriptor;
 
+		private Ivy ivy;
+		private ModuleDescriptor md;
+
 		public PerProjectInfo(IProject project) {
 			this.project = project;
 			writingDescriptor = false;
 		}
 
+		public synchronized void readAndCacheDescriptor() throws ModuleException {
+			IFolder folder = project.getFolder("ivy");
+			IResource descriptor = folder.findMember("metadata.xml");
+
+			URL descriptorURL = null;
+			try {
+				descriptorURL = descriptor.getLocationURI().toURL();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ModuleDescriptor md = null;
+			try {
+				md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(getIvyInstance().getSettings(),
+						descriptorURL, true);
+				this.md = md;
+				ResolveJob.getInstance().addModule(ModuleCore.create(project));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
 		public Ivy getIvyInstance() throws ModuleException {
-			// XXX
-			return null;
+			if (ivy != null) {
+				return ivy;
+			}
+			IvySettings settings = createSettings();
+			ivy = Ivy.newInstance(settings);
+			try {
+				ivy.configureDefault();
+			} catch (ParseException e) {
+				// FIXME
+			} catch (IOException e) {
+				// FIXME
+			}
+			return ivy;
 		}
 
-		public IModuleDescriptor getModuleDescriptor() throws ModuleException {
-			return null;
+		private IvySettings createSettings() {
+			IvySettings settings = new IvySettings();
+			return settings;
 		}
 
-		public void setResolveReport(final ResolveReport report) {
+		public ModuleDescriptor getModuleDescriptor() throws ModuleException {
+			IFolder folder = project.getFolder("ivy");
+			IResource descriptor = folder.findMember("metadata.xml");
+
+			IFile descriptorFile = project.getFile("ivy/metadata.xml");
+
+			URL descriptorURL = null;
+			try {
+				descriptorURL = descriptor.getLocationURI().toURL();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ModuleDescriptor md = null;
+			try {
+				md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(getIvyInstance().getSettings(),
+						descriptorURL, true);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return md;
+		}
+
+		public synchronized void setResolveReport(final ResolveReport report, IProgressMonitor monitor) {
 			resolveReport = report;
+
+			// IJavaProject p = JavaCore.create(this.project);
+			// try {
+			// IClasspathEntry[] oldEntries = p.getRawClasspath();
+			// List<IClasspathEntry> newEntries = new
+			// ArrayList<IClasspathEntry>();
+			// for (final IClasspathEntry entry : oldEntries) {
+			// newEntries.add(entry);
+			// }
+			//
+			// ArtifactDownloadReport[] artifactReports =
+			// resolveReport.getArtifactsReports(null, false);
+			//
+			// for (ArtifactDownloadReport artifactReport : artifactReports) {
+			// Artifact artifact = artifactReport.getArtifact();
+			// if (artifact.isMetadata()) {
+			// continue;
+			// }
+			// File file = artifactReport.getLocalFile();
+			// File t = file;
+			// // IClasspathEntry entry = JavaCore.newLibraryEntry(path,
+			// // sourceAttachmentPath,
+			// // sourceAttachmentRootPath);
+			// // newEntries.add(entry);
+			// }
+			//
+			// p.setRawClasspath(newEntries.toArray(new
+			// IClasspathEntry[newEntries.size()]), monitor);
+			// } catch (JavaModelException e) {
+			// e.printStackTrace();
+			// }
 		}
 
 		public synchronized ResolveReport resolve(ModuleProject moduleProject) throws ModuleException {
