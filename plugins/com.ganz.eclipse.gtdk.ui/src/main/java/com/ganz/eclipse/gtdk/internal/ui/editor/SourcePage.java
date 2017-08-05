@@ -1,5 +1,5 @@
 package com.ganz.eclipse.gtdk.internal.ui.editor;
 
-public class ActiveFormEditor {
+public class SourcePage {
 
 }

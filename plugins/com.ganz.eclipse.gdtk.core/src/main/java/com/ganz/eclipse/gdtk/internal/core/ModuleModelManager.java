@@ -5,11 +5,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.eclipse.core.resources.IFile;
@@ -23,8 +25,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.ganz.eclipse.gdtk.core.IModule;
+import com.ganz.eclipse.gdtk.core.IModuleRevision;
 import com.ganz.eclipse.gdtk.core.ModuleCore;
 import com.ganz.eclipse.gdtk.core.ModuleException;
+import com.ganz.eclipse.gdtk.internal.core.module.Descriptor;
+import com.ganz.eclipse.gdtk.internal.core.module.Revision;
 import com.ganz.eclipse.gdtk.internal.job.ResolveJob;
 
 public class ModuleModelManager {
@@ -100,8 +105,11 @@ public class ModuleModelManager {
 		private Ivy ivy;
 		private ModuleDescriptor md;
 
+		private HashMap<IModuleRevision, Module> dependencies;
+
 		public PerProjectInfo(IProject project) {
 			this.project = project;
+			this.dependencies = new HashMap<IModuleRevision, Module>();
 			writingDescriptor = false;
 		}
 
@@ -180,8 +188,22 @@ public class ModuleModelManager {
 			return md;
 		}
 
+		// public IModule[] getDependencies() {
+		//
+		// }
+
 		public synchronized void setResolveReport(final ResolveReport report, IProgressMonitor monitor) {
 			resolveReport = report;
+			dependencies.clear();
+			List<IvyNode> nodes = report.getDependencies();
+			for (IvyNode node : nodes) {
+				if (node.getDescriptor() != null) {
+					Revision revision = new Revision(node.getResolvedId());
+					Descriptor descriptor = new Descriptor(node.getDescriptor());
+					Module dependency = new Module(revision, descriptor);
+					dependencies.put(dependency.getRevision(), dependency);
+				}
+			}
 
 			// IJavaProject p = JavaCore.create(this.project);
 			// try {

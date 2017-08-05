@@ -45,4 +45,8 @@ public class ModuleUI extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
+
+	public static void log(Throwable e) {
+
+	}
 }

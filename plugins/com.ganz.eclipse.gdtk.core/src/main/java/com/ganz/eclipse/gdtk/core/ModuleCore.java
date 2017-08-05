@@ -8,7 +8,10 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
+import org.eclipse.pde.internal.ui.editor.OpenManifestHandler;
 import org.osgi.framework.BundleContext;
 
 import com.ganz.eclipse.gdtk.internal.core.ModuleModelManager;
@@ -45,8 +48,11 @@ public class ModuleCore extends Plugin {
 		}
 		ModuleModelManager.getInstance().start();
 		JavaCore.getJavaCore();
+		JavaUI.openInEditor(null);
 		// org.eclipse.jdt.ui.CompilationUnitEditor
 		PDECore t;
+		MultiSourceEditor x;
+		OpenManifestHandler h;
 
 	}
 

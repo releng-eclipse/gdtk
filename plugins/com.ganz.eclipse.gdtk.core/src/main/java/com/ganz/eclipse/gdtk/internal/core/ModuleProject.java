@@ -13,13 +13,17 @@ public class ModuleProject implements IModule {
 		this.project = project;
 	}
 
-	public IModule[] getDependencies() {
-		return new IModule[0];
-	}
-
 	@Override
 	public IProject getProject() {
 		return project;
+	}
+
+	public PerProjectInfo getPerProjectInfo() {
+		return ModuleModelManager.getInstance().getPerProjectInfo(project, true);
+	}
+
+	public String toString() {
+		return this.getProject().getName();
 	}
 
 	@Override
@@ -47,17 +51,15 @@ public class ModuleProject implements IModule {
 	}
 
 	@Override
+	public IModule[] getDependencies() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public IModuleRevision getResolvedRevision() {
 		// TODO Auto-generated method stub
-		return new ModuleRevision(this.getProject().getName());
-	}
-
-	public PerProjectInfo getPerProjectInfo() {
-		return ModuleModelManager.getInstance().getPerProjectInfo(project, true);
-	}
-
-	public String toString() {
-		return this.getProject().getName();
+		return null;
 	}
 
 }

@@ -30,10 +30,11 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="com.ganz.eclipse.gtdk.internal.ui.editor.descriptor.XMLEditor"
+            class="com.ganz.eclipse.gtdk.internal.ui.editor.module.Editor"
+            default="true"
             filenames="metadata.xml"
             icon="icons/xmleditor.gif"
-            id="com.ganz.eclipse.gtdk.ui.editor.descriptor.xmleditor"
+            id="com.ganz.eclipse.gtdk.ui.editor.module"
             name="Module Descriptor Editor">
          <contentTypeBinding
                contentTypeId="com.ganz.eclipse.gtdk.contentType.descriptorFile">
